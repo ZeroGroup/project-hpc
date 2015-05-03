@@ -1,0 +1,16 @@
+# -- Config file for the HPC package --
+#
+# It defines the following variables:
+#  HPC_INCLUDE_DIRS - include directories for HPC
+#  HPC_LIBRARIES    - libraries to link against
+#  HPC_EXECUTABLE   - the main application executable
+
+# Compute paths
+get_filename_component(HPC_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+include("${HPC_CMAKE_DIR}/HpcTargets.cmake")
+
+# These are IMPORTED targets created by HpcTargets.cmake
+set(HPC_LIBRARIES sensors)
+set(HPC_EXECUTABLE gui)
