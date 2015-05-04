@@ -12,5 +12,6 @@ get_filename_component(HPC_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 include("${HPC_CMAKE_DIR}/HpcTargets.cmake")
 
 # These are IMPORTED targets created by HpcTargets.cmake
-set(HPC_LIBRARIES sensors)
-set(HPC_EXECUTABLE gui)
+set(HPC_LIBRARIES hpc-sensors)
+set(HPC_EXECUTABLE hpc-gui)
+

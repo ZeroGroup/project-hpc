@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.11)
 
-project(Hpc)
+project(Hpc CXX C)
+
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 
 set(HPC_MAJOR_VERSION 0)
 set(HPC_MINOR_VERSION 1)
@@ -8,9 +10,16 @@ set(HPC_PATCH_VERSION 0)
 set(HPC_VERSION
   ${HPC_MAJOR_VERSION}.${HPC_MINOR_VERSION}.${HPC_PATCH_VERSION})
 
-if(${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
-  message(FATAL_ERROR "You should not call cmake in-source. See README.md for details")
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
 endif()
+
+# Remove 'lib' prefix for shared libraries on Windows
+if (WIN32)
+  set(CMAKE_SHARED_LIBRARY_PREFIX "")
+endif ()
 
 # install binaries in repository root,
 # TODO: make it parametric
@@ -23,6 +32,7 @@ get_filename_component(CMAKE_INSTALL_PREFIX
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
 set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
 set(INSTALL_INCLUDE_DIR include CACHE PATH "Installation directory for header files")
+set(INSTALL_DOCS_DIR docs CACHE PATH "Installation directory for documentation")
 
 if(WIN32 AND NOT CYGWIN)
   set(DEF_INSTALL_CMAKE_DIR CMake)
@@ -43,30 +53,28 @@ endforeach()
 # set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-find_package(CUDA REQUIRED)
-
-LIST(APPEND CMAKE_CXX_FLAGS "--std=c++11 -Wall")
-LIST(APPEND CUDA_NVCC_FLAGS -std=c++11 -gencode arch=compute_30,code=sm_30)
-SET(CUDA_PROPAGATE_HOST_FLAGS OFF)
+LIST(APPEND CMAKE_CXX_FLAGS "--std=c++11 -Wall -pedantic")
 
 include_directories(
 #  "${PROJECT_SOURCE_DIR}"   # to find hpc/foo.h
   "${PROJECT_BINARY_DIR}")      # to find hpc/<component>/config.h
 
 #######################################
-### COMPONENTS      LIST     BEGIN ####
+###  SETUP   GOOGLE    TEST   PATH  ###
+set(GTEST_ROOT ${PROJECT_SOURCE_DIR}/libs/gtest-1.7.0)
+
+#######################################
+###     COMPONENTS       LIST      ####
 
 add_subdirectory(sensors)
 add_subdirectory(gui)
 
 # testing component for illustration
 #add_subdirectory(component_name)
-
-### COMPONENTS       LIST      END ####
 #######################################
 
 # Add all targets to the build-tree export set
-export(TARGETS sensors FILE "${PROJECT_BINARY_DIR}/HpcTargets.cmake")
+export(TARGETS hpc-gui hpc-sensors FILE "${PROJECT_BINARY_DIR}/HpcTargets.cmake")
 
 # Export the package for use from the build-tree
 export(PACKAGE Hpc)
@@ -74,7 +82,6 @@ export(PACKAGE Hpc)
 # Create the HpcConfig.cmake and HpcConfigVersion.cmake files
 file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}" "${INSTALL_INCLUDE_DIR}")
 
-message(" DUUUUUUUUUPA: " ${REL_INCLUDE_DIR})
 # ... for the build tree
 set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
 configure_file(HpcConfig.cmake.in "${PROJECT_BINARY_DIR}/HpcConfig.cmake" @ONLY)
@@ -93,3 +100,16 @@ install(FILES
 
 # Install the export set for use with the install-tree
 install(EXPORT HpcTargets DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
+
+# DOXYGEN!, becouse why not
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile @ONLY)
+    add_custom_target(docs
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+
+    #install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION "${INSTALL_DOCS_DIR}/api")
+endif(DOXYGEN_FOUND)

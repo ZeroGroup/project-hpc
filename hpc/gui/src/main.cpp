@@ -1,16 +1,19 @@
 #include <iostream>
 
+#include <QtWidgets>
+
 #include <hpc/gui/MainWindow.hpp>
 
 using namespace std;
 
 int main(int ac, char *av[]){
-    cout << "Hello, World!" << endl;
+    QApplication app(ac, av);
 
     test_network();
 
-    cout << "Goodbye!" << endl;
+    QMainWindow * window = new QMainWindow();
+    window->setCentralWidget(new QLabel("Hello, World!"));
+    window->show();
 
-    //MainWindow app;
-    return 0; //app.exec(ac, av);
+    return app.exec();
 }

@@ -1,28 +1,45 @@
+#######################################################################
 # Component GUI
-# GUI is CUDA/C-free
+# GUI code is CUDA/C-free
+#
+# targets are executable `hpc-gui` and static library `libgui.a`
+#######################################################################
 
-set(COMPONENT_NAME gui)
-message("step into component: ${COMPONENT_NAME}")
+cmake_minimum_required(VERSION 2.8.11)
 
-#HACK!
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../sensors/src/include)
+project(hpc-gui)
+message("step into sub-project: ${PROJECT_NAME}")
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/include)
-aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src/cpp COMPONENT_CPP_SOURCES)
+set(GUI_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src/include)
 
-set(COMPONENT_LIBRARY_NAME gui)
-add_library(${COMPONENT_LIBRARY_NAME} STATIC ${COMPONENT_CPP_SOURCES})
+include_directories(${GUI_INCLUDE_DIR} ${SENSORS_INCLUDE_DIR})
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/cpp CXX_SOURCES)
 
-set(COMPONENT_EXECUTABLE_NAME hpc-gui)
+set(GUI_LIBRARY_NAME ${PROJECT_NAME}-static)
+add_library(${GUI_LIBRARY_NAME} STATIC ${CXX_SOURCES})
 
-add_executable(${COMPONENT_EXECUTABLE_NAME} src/main.cpp)
-target_link_libraries(${COMPONENT_EXECUTABLE_NAME} ${COMPONENT_LIBRARY_NAME} sensors)
+# Required on Unix OS family to be able to be linked into shared libraries.
+set_target_properties(${GUI_LIBRARY_NAME}
+  PROPERTIES POSITION_INDEPENDENT_CODE ON
+)
+
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Instruct CMake to run moc automatically when needed.
+set(CMAKE_AUTOMOC ON)
+
+find_package(Qt5Widgets)
+
+set(GUI_EXECUTABLE_NAME ${PROJECT_NAME})
+
+add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME} ${GUI_LIBRARY_NAME} ${SENSORS_LIBRARY_NAME} Qt5::Widgets)
 
 # component tests
 add_executable(test_gui tests/test_gui.cpp)
-target_link_libraries(test_gui ${COMPONENT_LIBRARY_NAME} sensors)
+target_link_libraries(test_gui ${GUI_LIBRARY_NAME} ${SENSORS_LIBRARY_NAME})
 
-install(TARGETS ${COMPONENT_LIBRARY_NAME} ${COMPONENT_EXECUTABLE_NAME}
+install(TARGETS ${GUI_LIBRARY_NAME} ${GUI_EXECUTABLE_NAME}
   EXPORT HpcTargets
   RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
   ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT lib
