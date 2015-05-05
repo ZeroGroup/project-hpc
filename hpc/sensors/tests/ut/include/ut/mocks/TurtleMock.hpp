@@ -10,3 +10,10 @@ public:
     MOCK_CONST_METHOD0(GetX, int());
     MOCK_CONST_METHOD0(GetY, int());
 };
+
+#include <hpc/sensors/Network.hpp>
+
+class SensorNetworkMock : public SensorNetwork {
+public:
+    MOCK_METHOD0(push, void());
+};

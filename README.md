@@ -5,6 +5,7 @@ A project for High Performance Calculation
 As follows
 
     /                       - working copy of repository (name irrelevant).
+      |- README.md          - this file
       |- bin/               - installed executables. Content .gitignored
       |- build/             - cmake output files. Content .gitignored
       |- doc/               - documentaation, notes.
