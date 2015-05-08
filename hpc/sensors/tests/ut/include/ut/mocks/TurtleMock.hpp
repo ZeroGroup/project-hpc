@@ -11,7 +11,7 @@ public:
     MOCK_CONST_METHOD0(GetY, int());
 };
 
-#include <hpc/sensors/Network.hpp>
+#include <hpc/sensors/SensorNetwork.hpp>
 
 class SensorNetworkMock : public SensorNetwork {
 public:

@@ -24,7 +24,7 @@ __global__ void sensor_kernel() {
 
 #include <iostream>
 
-void network_push(){
+void network_push(WorldUpdateDataStream& update_info){
 
     thrust::device_vector<int> dev_v(16);
     // for (int i = 0; i < 16; ++i){

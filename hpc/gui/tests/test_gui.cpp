@@ -1,6 +1,6 @@
 #include <hpc/gui/MainWindow.hpp>
 
-#include <hpc/sensors/Network.hpp>
+#include <hpc/sensors/SensorNetwork.hpp>
 
 int main(int ac, char *av[]){
     MainWindow * app = new MainWindow();
