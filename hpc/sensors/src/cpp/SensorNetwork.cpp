@@ -3,9 +3,21 @@
 #include <hpc/sensors/Network.hpp>
 #include <hpc/sensors/World.hpp>
 
-SensorNetwork::SensorNetwork(int n) {}
+SensorNetwork::SensorNetwork(int n) {
+    network_init();
+}
 
-SensorNetwork::~SensorNetwork() {}
+SensorNetwork::~SensorNetwork() {
+    network_destroy();
+}
+
+void SensorNetwork::start() {
+    network_start();
+}
+
+void SensorNetwork::stop() {
+    network_stop();
+}
 
 void SensorNetwork::push() {
     // create WorldInfoDataStream

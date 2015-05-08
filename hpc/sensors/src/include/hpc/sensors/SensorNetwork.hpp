@@ -10,6 +10,9 @@ public:
     SensorNetwork(int n = 4);
     virtual ~SensorNetwork();
 
+    virtual void start();
+    virtual void stop();
+
     virtual void push();
     virtual void pull();
 };

@@ -2,6 +2,7 @@
 
 #include <thrust/device_vector.h>
 
+
 __global__ void kernel(int *data) {
     // __syncthreads()
    unsigned int x = blockIdx.x * blockDim.x + threadIdx.x;
