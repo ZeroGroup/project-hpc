@@ -1,3 +1,5 @@
+#include <hpc/sensors/SensorNetwork.hpp>
+
 #include <hpc/sensors/Network.hpp>
 
 SensorNetwork::SensorNetwork(int n) {}
@@ -11,5 +13,5 @@ void SensorNetwork::push() {
 
 void SensorNetwork::pull() {
     // pull messages from DEVICE
-
+    network_pull();
 }

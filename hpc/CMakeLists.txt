@@ -13,7 +13,7 @@ set(HPC_VERSION
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
+  set(CMAKE_BUILD_TYPE Debug)
 endif()
 
 # Remove 'lib' prefix for shared libraries on Windows
