@@ -4,13 +4,50 @@ project(Hpc CXX C)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 
+# Get the current working branch
+execute_process(
+  COMMAND git rev-parse --abbrev-ref HEAD
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE HPC_GIT_BRANCH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the latest abbreviated commit hash of the working branch
+execute_process(
+  COMMAND git log -1 --format=%h
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE HPC_GIT_COMMIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the latest full commit hash of the working branch
+execute_process(
+  COMMAND git log -1 --format=%H
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE HPC_GIT_COMMIT_HASH_FULL
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Get the latest full commit hash of the working branch
+execute_process(
+  COMMAND date -u +"%Y-%m-%dT%H:%M:%SZ"
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  OUTPUT_VARIABLE HPC_BUILD_TIME
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+message(STATUS "building branch ${HPC_GIT_BRANCH} rev.${HPC_GIT_COMMIT_HASH_FULL}")
+
 set(HPC_MAJOR_VERSION 0)
 set(HPC_MINOR_VERSION 1)
 set(HPC_PATCH_VERSION 0)
-set(HPC_VERSION
-  ${HPC_MAJOR_VERSION}.${HPC_MINOR_VERSION}.${HPC_PATCH_VERSION})
+set(HPC_VERSION_STRING
+  ${HPC_MAJOR_VERSION}.${HPC_MINOR_VERSION}.${HPC_PATCH_VERSION}-rev${GIT_SHA1})
+
+configure_file(config.h.in "${PROJECT_BINARY_DIR}/config.h" @ONLY)
 
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)

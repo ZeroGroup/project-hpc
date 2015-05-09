@@ -1,19 +1,36 @@
 #include <iostream>
 
+#include "config.h"
+
 #include <QtWidgets>
 
-#include <hpc/gui/MainWindow.hpp>
+#include "MainWindow.hpp"
+
+#include <hpc/sensors/SensorNetwork.hpp>
+
+const QString app_name_format = "HPC Project v.%1";
 
 using namespace std;
 
-int main(int ac, char *av[]){
-    QApplication app(ac, av);
+int main(int argc, char *argv[]){
+    const QString app_name = app_name_format.arg(HPC_VERSION_STRING);
 
-    test_network();
+    cout << app_name.toStdString() << endl;
 
-    QMainWindow * window = new QMainWindow();
-    window->setCentralWidget(new QLabel("Hello, World!"));
-    window->show();
+    QApplication app(argc, argv);
+
+    QPixmap pixmap(":/img/splash.png");
+    QSplashScreen splash(pixmap);
+    splash.show();
+    splash.showMessage(app_name);
+
+    MainWindow window;
+    window.show();
+
+    splash.finish(&window);
+
+    SensorNetwork sn(4);
+    sn.push();
 
     return app.exec();
 }

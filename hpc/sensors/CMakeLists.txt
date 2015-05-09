@@ -8,9 +8,16 @@
 cmake_minimum_required(VERSION 2.8.11)
 project(hpc-sensors)
 
-#configure_file(config.h.in "${PROJECT_BINARY_DIR}/config.h" @ONLY)
-
 message("step into sub-project: ${PROJECT_NAME}")
+
+set(HPC_SENSORS_MAJOR_VERSION 0)
+set(HPC_SENSORS_MINOR_VERSION 1)
+set(HPC_SENSORS_PATCH_VERSION 0)
+set(HPC_SENSORS_VERSION_STRING
+  ${HPC_SENSORS_MAJOR_VERSION}.${HPC_SENSORS_MINOR_VERSION}.${HPC_SENSORS_PATCH_VERSION})
+
+configure_file(config.h.in "${PROJECT_BINARY_DIR}/config.h" @ONLY)
+
 
 find_package(CUDA REQUIRED)
 LIST(APPEND CUDA_NVCC_FLAGS -std=c++11 -gencode arch=compute_30,code=sm_30)
@@ -33,10 +40,14 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/src/cpp CXX_SOURCES)
 file(GLOB CU_SOURCES "${PROJECT_SOURCE_DIR}/src/cuda/*.cu")
 
 # targets for nVidia CUDA compiler
-cuda_add_library(${PROJECT_NAME} STATIC ${CXX_SOURCES} ${CU_SOURCES})
+cuda_add_library(${SENSORS_LIBRARY_NAME} STATIC ${CXX_SOURCES} ${CU_SOURCES})
+
+set_target_properties(${SENSORS_LIBRARY_NAME}
+  PROPERTIES POSITION_INDEPENDENT_CODE ON
+)
 
 # install library in lib directory
-install(TARGETS ${PROJECT_NAME}
+install(TARGETS ${SENSORS_LIBRARY_NAME}
   EXPORT HpcTargets
   RUNTIME DESTINATION "${INSTALL_BIN_DIR}" COMPONENT bin
   ARCHIVE DESTINATION "${INSTALL_LIB_DIR}" COMPONENT lib
@@ -57,7 +68,7 @@ if(${GMOCK_FOUND})
   enable_testing(true)
 
   cuda_add_executable(run_ut ${UT_SOURCES})
-  target_link_libraries(run_ut ${PROJECT_NAME} ${CUDA_LIBRARIES} ${GMOCK_LIBRARY_MAIN})
+  target_link_libraries(run_ut ${SENSORS_LIBRARY_NAME} ${CUDA_LIBRARIES} ${GMOCK_LIBRARY_MAIN})
   add_test(run_ut run_ut)
 endif()
 
