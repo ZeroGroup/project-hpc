@@ -14,20 +14,32 @@ private:
     void createStatusBar();
     void createToolbars();
 
-    QAction * _newSim;
-    QAction * _openSim;
+    QString _filename;
 
-    QAction * _aboutAct;
-    QAction * _aboutQtAct;
+    QAction * _fileNewAct;
+    QAction * _fileOpenAct;
+    QAction * _fileCloseAct;
+    QAction * _fileSaveAsAct;
+    QAction * _fileSaveAct;
+    QAction * _fileExitAct;
+
+    QAction * _helpAboutAct;
+    QAction * _helpAboutQtAct;
 
     QMdiArea * _mdiArea;
 
 private slots:
-    void newSimulation();
-    void openSimulation();
+    void fileNew();
+    void fileOpen();
+    void fileClose();
+    void fileSaveAs();
+    void fileSave();
 
-    void about();
-    void aboutQt();
+    void helpAbout();
+    void helpAboutQt();
+
+public:
+    void closeEvent(QCloseEvent *event);
 };
 
 void test_network();

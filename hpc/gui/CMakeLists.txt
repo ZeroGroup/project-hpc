@@ -26,10 +26,12 @@ find_package(Qt5Widgets REQUIRED)
 ####
 ## ADD EXECUTABLE
 ####
-aux_source_directory("${PROJECT_SOURCE_DIR}/src" CXX_SOURCES)
 include_directories("${PROJECT_SOURCE_DIR}/src" ${SENSORS_INCLUDE_DIR})
 
-add_executable(${GUI_EXECUTABLE_NAME} ${CXX_SOURCES})
+aux_source_directory("${PROJECT_SOURCE_DIR}/src" CXX_SOURCES)
+qt5_add_resources(QT_RESOURCES "${PROJECT_SOURCE_DIR}/res/icons.qrc")
+
+add_executable(${GUI_EXECUTABLE_NAME} ${CXX_SOURCES} ${QT_RESOURCES})
 target_link_libraries(${GUI_EXECUTABLE_NAME}
   ${SENSORS_LIBRARY_NAME}
   Qt5::Widgets

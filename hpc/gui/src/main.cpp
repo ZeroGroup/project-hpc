@@ -26,6 +26,7 @@ int main(int argc, char *argv[]){
 
     MainWindow window;
     window.show();
+    window.setWindowTitle(app_name);
 
     splash.finish(&window);
 

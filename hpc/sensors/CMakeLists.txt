@@ -18,6 +18,7 @@ set(HPC_SENSORS_VERSION_STRING
 
 configure_file(config.h.in "${PROJECT_BINARY_DIR}/config.h" @ONLY)
 
+find_package(Boost 1.55 COMPONENTS serialization)
 
 find_package(CUDA REQUIRED)
 LIST(APPEND CUDA_NVCC_FLAGS -std=c++11 -gencode arch=compute_30,code=sm_30)
@@ -41,6 +42,7 @@ file(GLOB CU_SOURCES "${PROJECT_SOURCE_DIR}/src/cuda/*.cu")
 
 # targets for nVidia CUDA compiler
 cuda_add_library(${SENSORS_LIBRARY_NAME} STATIC ${CXX_SOURCES} ${CU_SOURCES})
+target_link_libraries(${SENSORS_LIBRARY_NAME} ${Boost_LIBRARIES})
 
 set_target_properties(${SENSORS_LIBRARY_NAME}
   PROPERTIES POSITION_INDEPENDENT_CODE ON
