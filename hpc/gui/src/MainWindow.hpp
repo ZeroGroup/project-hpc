@@ -3,6 +3,8 @@
 
 #include <QtWidgets>
 
+class SimulationData;
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
@@ -13,8 +15,6 @@ private:
     void createMenus();
     void createStatusBar();
     void createToolbars();
-
-    QString _filename;
 
     QAction * _fileNewAct;
     QAction * _fileOpenAct;
@@ -28,6 +28,8 @@ private:
 
     QMdiArea * _mdiArea;
 
+    SimulationData * _sdata;
+
 private slots:
     void fileNew();
     void fileOpen();
@@ -38,8 +40,11 @@ private slots:
     void helpAbout();
     void helpAboutQt();
 
-public:
+protected:
     void closeEvent(QCloseEvent *event);
+
+private:
+    void maybeSave();
 };
 
 void test_network();
