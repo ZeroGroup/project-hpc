@@ -4,6 +4,8 @@
 #include <queue>
 
 #include <thrust/device_vector.h>
+#include <thrust/host_vector.h>
+
 
 #include <hpc/sensors/Message.hpp>
 #include <hpc/sensors/World.hpp>

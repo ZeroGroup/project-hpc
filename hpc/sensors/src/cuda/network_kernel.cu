@@ -1,23 +1,40 @@
 #include <hpc/sensors/Network.hpp>
 
+#include <cuda.h>
+#include <sys/time.h>
+
 #include "network_kernel.cuh"
 
-__global__ void network_kernel(int *data) {
-    __shared__ bool running;
+#include <cuda.h>
+#include <curand.h>
+#include <curand_kernel.h>
 
-    running = true;
-    // __syncthreads()
-    unsigned int x = blockIdx.x * blockDim.x + threadIdx.x;
-    // unsigned int y = blockIdx.y * blockDim.y + threadIdx.y;
+__device__ void wait10kclocks() {
+    clock_t start_clock = clock();
+
+    while (clock() - start_clock < 10000);
+}
+
+__global__ void network_kernel(CyclicBuffer<int, 80> * bufs, curandState * state){
+    unsigned int id = blockIdx.x * blockDim.x + threadIdx.x;
+
+    curandState localState = state[id];
+
+    int c = 0;
+    bool random_bit = false;
 
     __syncthreads();
-    data[x] = static_cast<int>('A') + x;
-    __syncthreads();
+    while (++c < 20){
+        random_bit = static_cast<bool>(curand(&localState) & 1);
 
-    // while (running) {
-    //     __syncthreads();
+        if (random_bit){
+            bufs[id].push(static_cast<int>('A') + (c % ('Z' - 'A')));
+        }
 
-    // }
+        __syncthreads();
+    }
+
+    state[id] = localState;
 }
 
 /*
