@@ -76,4 +76,4 @@ in C++ source files and other private headers, note:
 1.
   **Q:** I got "You should not call cmake in-source..." error, why?
 
-  **A:** Becouse this will create heavily polluted working copy, which may result in accidentaly adding binaries to version control, small kittens horrible death or even total extinciton of *Ailuropoda melanoleuca* species. The solution is to re-read and understand [Compilation Steps](#compilation-steps) subsection of this file.
+  **A:** Becouse this will create heavily polluted working copy, which may result in accidentaly small kittens horrible death, total extinciton of *Ailuropoda melanoleuca* species or even adding binaries to version control. The solution is to re-read and understand [Compilation Steps](#compilation-steps) subsection of this file.
